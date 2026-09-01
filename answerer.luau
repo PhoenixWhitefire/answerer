@@ -1,6 +1,5 @@
 -- qna.luau, 31/08/2026
 local question = tostring((...))
-print(`Q: { question }`)
 question = string.lower(question)
 
 local tokenCorrect = {
@@ -471,9 +470,9 @@ if sentence.query and sentence.subject and sentence.attribute then
                 local query = attribute[sentence.query]
 
                 if typeof(query) == "table" then
-                    print(`A: { (if sentence.queryInit then query[sentence.queryInit] or query["_"] else query[sentence.query]) or "That doesn't look right." }`)
+                    print((if sentence.queryInit then query[sentence.queryInit] or query["_"] else query[sentence.query]) or "That doesn't look right.")
                 else
-                    print(`A: { query }`)
+                    print(query)
                 end
             else
                 if (sentence.query == "do" or sentence.query == "dont") and not sentence.queryInit then
@@ -490,9 +489,9 @@ if sentence.query and sentence.subject and sentence.attribute then
                         local query = field[sentence.query]
 
                         if typeof(query) == "table" then
-                            print(`A: { (if sentence.queryInit then query[sentence.queryInit] or query["_"] else query[sentence.query]) or "That doesn't look right." }`)
+                            print((if sentence.queryInit then query[sentence.queryInit] or query["_"] else query[sentence.query]) or "That doesn't look right.")
                         else
-                            print(`A: { query }`)
+                            print(query)
                         end
                     else
                         print("That doesn't seem quite right.")
@@ -571,7 +570,7 @@ else
                     local success, result = maev.ev(expr)
 
                     if success then
-                        print(`A: { result }.`)
+                        print(`{ result }.`)
                     else
                         local _, p = string.find(result, ".luau:%d+%:")
                         print(`Maev says: { string.sub(result, p + 2, #result) }`)
@@ -590,8 +589,10 @@ else
     end
 end
 
-print("\n")
+print("")
 
+--[[
 for k, v in sentence do
     print(`{ k } = { v }`)
 end
+]]--
