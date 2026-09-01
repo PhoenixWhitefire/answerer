@@ -366,7 +366,7 @@ local sentence = (function()
         local tk = tokens[i]
 
         if tk == "what" or tk == "who" or tk == "when" or tk == "where" or tk == "why" or tk == "how" or tk == "do" or tk == "dont"
-            or tk == "does" or tk == "would" or tk == "could" or tk == "did"
+            or tk == "does" or tk == "would" or tk == "could" or tk == "did" or tk == "will"
             or ((tk == "are" or tk == "is" or tk == "am" or tk == "can") and i == 1)
         then
             if sentence.query then
@@ -477,6 +477,8 @@ if sentence.query and sentence.subject and sentence.attribute then
             else
                 if (sentence.query == "do" or sentence.query == "dont") and not sentence.queryInit then
                     print("I do.")
+                elseif sentence.query == "do" and sentence.queryInit == "why" and subjects[sentence.subject] == subjects.answerer then
+                    print("You should panic.")
                 else
                     print("That's not quite right.")
                 end
@@ -535,8 +537,14 @@ if sentence.query and sentence.subject and sentence.attribute then
                 end
             elseif sentence.query == "can" then
                 print("My capabilities are limited in nature.")
-            elseif sentence.query == "could" or sentence.query == "would" then
+            elseif sentence.query == "would" then
                 print("I try not to speculate excessively.")
+            elseif sentence.query == "how" or sentence.queryInit == "how" then
+                print("Telling you would ruin the fun.")
+            elseif sentence.query == "do" and sentence.queryInit == "why" then
+                print("You're really good at interrogating.")
+            elseif sentence.query == "will" then
+                print("I won't.")
             else
                 print("This experience is making me understand the concept of 'frustration.'")
             end
