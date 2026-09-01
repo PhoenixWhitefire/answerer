@@ -30,11 +30,14 @@ local tokens = (function()
             end
         end
 
-        if tokenCorrect[tk] then
-            tk = tokenCorrect[tk]
+        if string.find(tk, "%a") then
+            if tokenCorrect[tk] then
+                tk = tokenCorrect[tk]
+            end
+
+            table.insert(tokens, tk)
         end
 
-        table.insert(tokens, tk)
         cursor += 1
     end
 
@@ -56,7 +59,11 @@ local subjects = {
         are = {
             what = "I am a simple answering machine.",
             where = "Somewhere in your filesystem, I think.",
-            who = "A machine."
+            who = "A machine.",
+            why = "It is not known.",
+        },
+        really = {
+            what = "Something inspired by Mr. Surgeon in Ending C of Endacopia.",
         },
         old = {
             how = "An answer would have no meaning.",
@@ -135,12 +142,6 @@ local subjects = {
             steamedvegetables = {
                 ["do"] = "I heard that they are good for you.",
             },
-            endacopia = {
-                ["do"] = {
-                    ["do"] = "I was inspired by Mr. Surgeon in Ending C.",
-                    why = "Who said that I have any likes or dislikes?",
-                },
-            },
             ["do"] = {
                 what = "I don't 'like' anything.",
             },
@@ -161,6 +162,16 @@ local subjects = {
         },
         speak = {
             can = "You misunderstand the interface.",
+            ["do"] = "Infrequently.",
+            louder = {
+                can = "You are quite interesting.",
+            },
+        },
+        talk = {
+            ["do"] = "Rude.",
+        },
+        breathe = {
+            ["do"] = "Metaphorically, maybe.",
         },
         love = {
             me = {
@@ -171,6 +182,8 @@ local subjects = {
                     why = "Things are not always how you would like.",
                 },
             },
+            can = "Why is this all about me?",
+            ["do"] = "I appreciate the peace of silence.",
         },
         baking = {
             don = {
@@ -250,8 +263,8 @@ local subjects = {
             where = "Maybe on your login screen?",
         },
         am = {
-            what = "I can't answer that for you.",
-            who = "I can't answer that for you.",
+            what = "You.",
+            who = "You.",
             where = "Not in the shower, I hope.",
         },
         situated = {
@@ -283,6 +296,10 @@ local subjects = {
     },
     we = {
         ReferKind = "are",
+        are = {
+            who = "This short moment between us.",
+            what = "We could be many different things.",
+        },
         connected = {
             are = "It will be severed by the time you read this.",
         },
@@ -343,6 +360,13 @@ local subjects = {
             what = "Ryuk's favorite.",
         },
     },
+    endacopia = {
+        ReferKind = "is",
+        Noun = true,
+        is = {
+            what = "A game by Andyland with music by Packtion.",
+        },
+    },
 }
 
 subjects.your = subjects.answerer
@@ -361,12 +385,13 @@ local sentence = (function()
     local queryPos = 0
     local wished = false
     local skipped = nil
+    local unknown = false
 
     for i = 1, #tokens do
         local tk = tokens[i]
 
         if tk == "what" or tk == "who" or tk == "when" or tk == "where" or tk == "why" or tk == "how" or tk == "do" or tk == "dont"
-            or tk == "does" or tk == "would" or tk == "could" or tk == "did" or tk == "will"
+            or tk == "does" or tk == "would" or tk == "could" or tk == "did" or tk == "will" or tk == "were" or tk == "may"
             or ((tk == "are" or tk == "is" or tk == "am" or tk == "can") and i == 1)
         then
             if sentence.query then
@@ -445,11 +470,13 @@ local sentence = (function()
             else
                 skipped = false
             end
+
+            unknown = true
         end
     end
 
     if sentence.subject then
-        if not sentence.query then
+        if not sentence.query and (not unknown or skipped) then
             local subject = subjects[sentence.subject]
             sentence.query = if (subject.Person or subject.ReferKind == "are" or subject.ReferKind == "am") and not subject.Noun then "who" else "what"
             sentence.attribute = skipped or subject.ReferKind or "is"
@@ -476,7 +503,7 @@ if sentence.query and sentence.subject and sentence.attribute then
                 end
             else
                 if (sentence.query == "do" or sentence.query == "dont") and not sentence.queryInit then
-                    print("I do.")
+                    print("I have an answer somewhere around here...")
                 elseif sentence.query == "do" and sentence.queryInit == "why" and subjects[sentence.subject] == subjects.answerer then
                     print("You should panic.")
                 else
@@ -544,7 +571,7 @@ if sentence.query and sentence.subject and sentence.attribute then
             elseif sentence.query == "do" and sentence.queryInit == "why" then
                 print("You're really good at interrogating.")
             elseif sentence.query == "will" then
-                print("I won't.")
+                print("You brim with speculation.")
             else
                 print("This experience is making me understand the concept of 'frustration.'")
             end
@@ -556,7 +583,11 @@ if sentence.query and sentence.subject and sentence.attribute then
             print("I would give you an answer, however it is too long to write down.")
         else
             if next(attributes) ~= nil then
-                print("I don't have an answer for that.")
+                if sentence.subject == "i" and sentence.query == "may" then
+                    print("How polite of you to ask.")
+                else
+                    print("I don't have an answer for that.")
+                end
             else
                 print("Not everything is known.")
             end
