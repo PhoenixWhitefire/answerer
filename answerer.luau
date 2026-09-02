@@ -1,4 +1,4 @@
--- qna.luau, 31/08/2026
+-- answerer.luau, 31/08/2026
 local question = tostring((...))
 question = string.lower(question)
 
@@ -52,8 +52,8 @@ local subjects = {
         Displayed = "me",
         ReferKind = "are",
         name = {
-            what = "qna.luau.",
-            where = "In my code.",
+            what = "An answerer.",
+            where = "Here.",
             is = "I'm not 20 Questions.",
         },
         are = {
